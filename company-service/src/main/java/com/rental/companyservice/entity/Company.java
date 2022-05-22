@@ -1,36 +1,46 @@
 package com.rental.companyservice.entity;
 
+import com.sun.istack.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name="company")
+@Table(name = "company")
 public class Company {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "id", columnDefinition = "VARCHAR(255)")
+    @Column(name = "id")
     private UUID id;
 
-    @Column(name="name")
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name="location")
-    private String location;
+    @Column(name = "phone_num", nullable = false)
+    private String phoneNumber;
+
+    @Column(name = "email", nullable = false)
+    private String email;
+
+    @ManyToMany
+    @JoinTable(
+            name = "point",
+            joinColumns = @JoinColumn(name = "company_id"),
+            inverseJoinColumns = @JoinColumn(name = "location_id"))
+    private Set<Location> points;
 
     public Company() {
-
     }
-    public Company(String name, String location) {
+
+    public Company(UUID id, String name, String phoneNumber, String email) {
+        this.id = id;
         this.name = name;
-        this.location = location;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
     }
-
-
 
     public UUID getId() {
         return id;
@@ -44,11 +54,20 @@ public class Company {
         this.name = name;
     }
 
-    public String getLocation() {
-        return location;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
 }

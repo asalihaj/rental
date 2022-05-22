@@ -1,42 +1,69 @@
 package com.rental.companyservice.entity;
 
-import org.hibernate.annotations.CreationTimestamp;
+import com.sun.istack.NotNull;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.UUID;
 
 @Entity
 @Table(name = "employee")
 public class Employee {
     @Id
-    @Column(name = "username")
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "id")
+    private UUID id;
+
+    @Column(name = "username", nullable = false)
+    @NotNull
     private String username;
 
-    @Column(name = "email", unique = true)
-    private String email;
-
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "date_created")
-    private Date dateCreated;
+    @ManyToOne
+    @JoinColumn(
+            name = "location_id",
+            referencedColumnName = "id",
+            insertable = false,
+            nullable = false,
+            updatable = false)
+    private Location location;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "company_id")
-    private Company companyId;
+    @ManyToOne
+    @NotNull
+    @JoinColumn(
+            name = "company_id",
+            referencedColumnName = "id",
+            nullable = false,
+            insertable = false,
+            updatable = false)
+    private Company company;
+
+    @ManyToOne
+    @NotNull
+    @JoinColumn(
+            name = "group_id",
+            referencedColumnName = "id",
+            nullable = false,
+            insertable = false,
+            updatable = false)
+    private Groups groups;
 
     public Employee() {
     }
 
-    public Employee(String username, String email, String password, Company companyId) {
+    public Employee(UUID id, String username, String password, Company company, Location location) {
+        this.id = id;
         this.username = username;
-        this.email = email;
         this.password = password;
-        setDateCreated();
-        this.dateCreated = getDateCreated();
-        this.companyId = companyId;
+        this.company = company;
+        this.location = location;
+    }
+
+    public UUID getId() {
+        return id;
     }
 
     public String getUsername() {
@@ -47,14 +74,6 @@ public class Employee {
         this.username = username;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getPassword() {
         return password;
     }
@@ -63,19 +82,27 @@ public class Employee {
         this.password = password;
     }
 
-    public Date getDateCreated() {
-        return dateCreated;
+    public Company getCompany() {
+        return company;
     }
 
-    public void setDateCreated() {
-        this.dateCreated = new Date();
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
-    public Company getCompanyId() {
-        return companyId;
+    public Location getLocation() {
+        return location;
     }
 
-    public void setCompanyId(Company companyId) {
-        this.companyId = companyId;
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public Groups getGroups() {
+        return groups;
+    }
+
+    public void setGroups(Groups groups) {
+        this.groups = groups;
     }
 }
